@@ -2,6 +2,8 @@
 
 using Autofac;
 using ProjectManagementSystem.Entity.Data;
+using ProjectManagementSystem.Repository.Interface;
+using ProjectManagementSystem.Repository.Repositories;
 
 namespace ProjectManagementSystem.Application
 {
@@ -11,7 +13,8 @@ namespace ProjectManagementSystem.Application
         {
 
             builder.RegisterType<Context>().InstancePerLifetimeScope();
-            
+            builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>)).InstancePerLifetimeScope();
+
         }
     }
 }

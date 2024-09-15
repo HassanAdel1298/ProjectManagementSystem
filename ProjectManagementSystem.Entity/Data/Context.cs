@@ -1,6 +1,7 @@
 ﻿
 
 using Microsoft.EntityFrameworkCore;
+using ProjectManagementSystem.Entity.Entities;
 
 namespace ProjectManagementSystem.Entity.Data
 {
@@ -12,8 +13,10 @@ namespace ProjectManagementSystem.Entity.Data
             ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
 
-        
 
+        public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
 
     }
 }

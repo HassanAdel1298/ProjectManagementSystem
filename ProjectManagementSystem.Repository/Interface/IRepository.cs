@@ -4,16 +4,16 @@ using ProjectManagementSystem.Entity.Entities;
 
 namespace ProjectManagementSystem.Repository.Interface
 {
-    public interface IRepository<T> where T : BaseModel, new()
+    public interface IRepository<T> where T : BaseModel
     {
        
-        IQueryable<T> GetAll();
-        T GetByID(int id);
-        T Add(T entity);
-        T Update(T entity);
-        void Delete(T entity);
-        void Delete(int id);
-        public void AddRange(List<T> entities);
-        void SaveChanges();
+        IQueryable<T> GetAllAsync();
+        Task<T> GetByIDAsync(int id);
+        Task<T> AddAsync(T entity);
+        Task<T> UpdateAsync(T entity);
+        Task DeleteAsync(T entity);
+        Task DeleteAsync(int id);
+        Task AddRangeAsync(List<T> entities);
+        Task SaveChangesAsync();
     }
 }

@@ -3,13 +3,14 @@
 
 
 
+using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystem.Entity.Data;
 using ProjectManagementSystem.Entity.Entities;
 using ProjectManagementSystem.Repository.Interface;
 
 namespace ProjectManagementSystem.Repository.Repositories
 {
-    public class Repository<T> : IRepository<T> where T : BaseModel, new()
+    public class Repository<T> : IRepository<T> where T : BaseModel
     {
         Context _context;
 
@@ -18,49 +19,49 @@ namespace ProjectManagementSystem.Repository.Repositories
             _context = context;
         }
 
-        public T Add(T entity)
+        public async Task<T> AddAsync(T entity)
         {
-            _context.Set<T>().Add(entity);
+            await _context.Set<T>().AddAsync(entity);
             return entity;
         }
 
-        public void Delete(T entity)
+        public async Task DeleteAsync(T entity)
         {
             entity.IsDeleted = true;
-            Update(entity);
+            await UpdateAsync(entity);
         }
 
 
-        public void AddRange(List<T> entities)
+        public async Task AddRangeAsync(List<T> entities)
         {
-            _context.Set<T>().AddRange(entities);
+            await _context.Set<T>().AddRangeAsync(entities);
         }
 
-        public IQueryable<T> GetAll()
+        public IQueryable<T> GetAllAsync()
         {
             return _context.Set<T>().Where(a => a.IsDeleted != true);
         }
 
-        public T GetByID(int id)
+        public async Task<T> GetByIDAsync(int id)
         {
-            return _context.Set<T>().FirstOrDefault(a => a.IsDeleted != true && a.ID == id);
+            return await _context.Set<T>().FirstOrDefaultAsync(a => a.IsDeleted != true && a.ID == id);
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            T entity = _context.Find<T>(id);
-            Delete(entity);
+            T entity = await _context.FindAsync<T>(id);
+            await DeleteAsync(entity);
         }
 
-        public void SaveChanges()
+        public async Task SaveChangesAsync()
         {
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public T Update(T entity)
+        public async Task<T> UpdateAsync(T entity)
         {
             _context.Set<T>().Update(entity);
-            return entity;
+            return await Task.FromResult(entity);
         }
 
     }
