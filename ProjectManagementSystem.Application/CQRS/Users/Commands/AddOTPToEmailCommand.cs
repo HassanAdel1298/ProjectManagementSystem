@@ -16,9 +16,12 @@ namespace ProjectManagementSystem.Application.CQRS.Users.Commands
 
     public record AddOTPToEmailCommand(string Email) : IRequest<ResultDTO<OTPAddedDTO>>;
 
-    public record OTPAddedDTO(
-       string Email,
-       string OTP);
+    public class OTPAddedDTO
+    {
+       public string Email { get; set; }
+       public string OTP { get; set; }
+    }
+       
 
     public class AddOTPToEmailCommandHandler : IRequestHandler<AddOTPToEmailCommand, ResultDTO<OTPAddedDTO>>
     {

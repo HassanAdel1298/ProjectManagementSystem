@@ -14,16 +14,19 @@ namespace ProjectManagementSystem.Application.CQRS.Users.Commands
 {
     public record RegisterUserCommand(RegisterUserDTO registerUserDTO) : IRequest<ResultDTO<RegisterUserDTO>>;
 
-    public record RegisterUserDTO(
-        int ID,
-        string FirstName,
-        string LastName,
-        string UserName,
-        string Email,
-        string PhoneNumber,
-        string Password,
-        string ConfirmPassword,
-        string OTP);
+    public class RegisterUserDTO
+    {
+        public int ID { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string UserName { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Password { get; set; }
+        public string ConfirmPassword { get; set; }
+        public string OTP { get; set; } 
+    }
+       
 
     public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, ResultDTO<RegisterUserDTO>>
     {

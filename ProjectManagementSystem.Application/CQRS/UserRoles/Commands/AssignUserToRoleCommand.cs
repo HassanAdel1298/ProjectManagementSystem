@@ -14,7 +14,11 @@ namespace ProjectManagementSystem.Application.CQRS.UserRoles.Commands
 {
     public record AssignUserToRoleCommand(UserRoleDTO userRoleDTO) : IRequest<ResultDTO<UserRoleDTO>>;
 
-    public record UserRoleDTO(int UserID, int RoleID);
+    public class UserRoleDTO 
+    {
+        public int UserID { get; set; }
+        public int RoleID { get; set; }
+    } 
 
     public class AssignUserToRoleCommandHandler : IRequestHandler<AssignUserToRoleCommand, ResultDTO<UserRoleDTO>>
     {

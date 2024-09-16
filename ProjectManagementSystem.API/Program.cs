@@ -46,7 +46,8 @@ namespace ProjectManagementSystem.API
             builder.Services.AddAutoMapper(typeof(RoleProfile));
             builder.Services.AddAutoMapper(typeof(UserProfile));
 
-            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly));
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly
+                                            (Assembly.GetExecutingAssembly()));
 
             builder.Services.AddSwaggerGen(c =>
             {

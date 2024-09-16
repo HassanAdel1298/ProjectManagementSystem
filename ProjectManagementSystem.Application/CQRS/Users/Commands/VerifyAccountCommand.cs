@@ -16,7 +16,11 @@ namespace ProjectManagementSystem.Application.CQRS.Users.Commands
 
     public record VerifyAccountCommand(VerifyUserDTO verifyUserDTO) : IRequest<ResultDTO<bool>>;
 
-    public record VerifyUserDTO(string Email, string OTP);
+    public class VerifyUserDTO
+    {
+        public string Email { get; set; }
+        public string OTP { get; set; }
+    }
 
     public class VerifyAccountCommandHandler : IRequestHandler<VerifyAccountCommand, ResultDTO<bool>>
     {

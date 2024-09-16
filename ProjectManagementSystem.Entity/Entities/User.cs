@@ -18,6 +18,11 @@ namespace ProjectManagementSystem.Entity.Entities
         public bool IsEmailVerified { get; set; }
         public string PhoneNumber { get; set; }
         public string? Country { get; set; }
+        public bool IsActive { get; set; } = false;
         public ICollection<UserRole> UserRoles { get; set; }
+        public ICollection<Project> Projects { get; set; }
+        public ICollection<UserProject> UserProjects { get; set; }
+        public ICollection<AppTask> Tasks { get; set; }
+        public ICollection<UserTask> UserTasks { get; set; }
     }
 }

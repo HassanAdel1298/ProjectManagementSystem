@@ -13,8 +13,11 @@ namespace ProjectManagementSystem.Application
         {
 
             builder.RegisterType<Context>().InstancePerLifetimeScope();
-            builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>)).InstancePerLifetimeScope();
+            
+            builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>))
+                                        .InstancePerLifetimeScope();
 
+            
         }
     }
 }

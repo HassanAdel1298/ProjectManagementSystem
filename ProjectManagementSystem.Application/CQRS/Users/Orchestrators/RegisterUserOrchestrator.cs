@@ -30,12 +30,13 @@ namespace ProjectManagementSystem.Application.CQRS.Users.Orchestrators
                 return resultDTO;
             }
 
-            SendEmailDTO sendEmailDTO = new SendEmailDTO(
-            
-                resultDTO.Data.Email,
-                "Verify your email",
-                $"Please verify your email address by OTP : {resultDTO.Data.OTP}"
-            );
+            SendEmailDTO sendEmailDTO = new SendEmailDTO()
+            {
+                ToEmail = resultDTO.Data.Email,
+                Subject = "Verify your email",
+                Body = $"Please verify your email address by OTP : {resultDTO.Data.OTP}"
+            };
+    
 
             await _mediator.Send(new SendVerificationEmailCommand(sendEmailDTO));
 

@@ -14,7 +14,10 @@ namespace ProjectManagementSystem.Application.CQRS.Roles.Commands
 {
     public record CreateRoleCommand(RoleDTO roleDTO) : IRequest<ResultDTO<bool>>;
 
-    public record RoleDTO(string Name);
+    public class RoleDTO 
+    {
+       public string Name { get; set; }
+    } 
 
     public class CreateRoleCommandHandler : IRequestHandler<CreateRoleCommand, ResultDTO<bool>>
     {

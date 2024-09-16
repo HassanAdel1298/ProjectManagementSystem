@@ -17,12 +17,15 @@ namespace ProjectManagementSystem.Application.CQRS.Users.Commands
     public record ResetPasswordCommand(ResetPasswordDto resetPasswordDto) : IRequest<ResultDTO<bool>>;
     
 
-    public record ResetPasswordDto(
-        string Email,
-        string OTP,
-        string NewPassword ,
-        string ConfirmNewPassword
-        );
+    public class ResetPasswordDto
+    {
+        public string Email { get; set; }
+        public string OTP { get; set; }
+        public string NewPassword { get; set; }
+        public string ConfirmNewPassword { get; set; }
+
+    }
+        
     
 
     public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand, ResultDTO<bool>>

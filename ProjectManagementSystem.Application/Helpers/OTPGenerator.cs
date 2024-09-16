@@ -11,7 +11,7 @@ namespace ProjectManagementSystem.Application.Helpers
         public static string CreateOTP()
         {
             Random random = new Random();
-            string randomno = random.Next(0, 1000000).ToString("D6");
+            string randomno = random.Next(100000, 999999).ToString();
             return randomno;
         }
     }
