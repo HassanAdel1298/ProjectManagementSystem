@@ -15,15 +15,15 @@ namespace ProjectManagementSystem.Entity.Entities
 
         public TaskStatus Status { get; set; }
 
-        public DateTime CreatedDate { get; set; }
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
 
         [ForeignKey("Project")]
         public int ProjectID { get; set; }
         public Project Project { get; set; }
 
-        [ForeignKey("User")]
-        public int? UserID { get; set; }
-        public User? User { get; set; }
+        [ForeignKey("UserCreate")]
+        public int? UserCreateID { get; set; }
+        public User? UserCreate { get; set; }
 
         public ICollection<UserTask> UserTasks { get; set; }
 

@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using ProjectManagementSystem.Application.CQRS.UserRoles.Commands;
 using ProjectManagementSystem.Application.CQRS.Users.Commands;
 using ProjectManagementSystem.Application.DTO;
 using ProjectManagementSystem.Entity.Entities;
@@ -40,11 +39,6 @@ namespace ProjectManagementSystem.Application.CQRS.Users.Orchestrators
 
             await _mediator.Send(new SendVerificationEmailCommand(sendEmailDTO));
 
-
-
-            //UserRoleDTO userRoleDTO = new UserRoleDTO(resultDTO.Data.ID, 1);
-
-            //await _mediator.Send(new AssignUserToRoleCommand(userRoleDTO));
 
             return resultDTO;
         }

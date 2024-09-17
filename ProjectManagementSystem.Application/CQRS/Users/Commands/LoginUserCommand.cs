@@ -45,9 +45,7 @@ namespace ProjectManagementSystem.Application.CQRS.Users.Commands
                 return ResultDTO<string>.Faliure("Email or Password is incorrect");
             }
 
-            var token = TokenGenerator.GenerateToken(user.ID.ToString()
-                                , user.FullName
-                                , user.UserRoles.Where(r => r.UserID == user.ID).ToString());
+            var token = TokenGenerator.GenerateToken(user.ID.ToString(),user.Email,user.FullName);
 
             return ResultDTO<string>.Sucess(token, "User Login Successfully!");
         }

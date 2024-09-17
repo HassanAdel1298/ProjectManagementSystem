@@ -15,12 +15,10 @@ namespace ProjectManagementSystem.Entity.Entities
         public string PasswordHash { get; set; }
         public string Email { get; set; }
         public string OTP { get; set; }
-        public bool IsEmailVerified { get; set; }
+        public bool IsEmailVerified { get; set; } = false;
         public string PhoneNumber { get; set; }
-        public string? Country { get; set; }
+        public string Country { get; set; }
         public bool IsActive { get; set; } = false;
-        public ICollection<UserRole> UserRoles { get; set; }
-        public ICollection<Project> Projects { get; set; }
         public ICollection<UserProject> UserProjects { get; set; }
         public ICollection<AppTask> Tasks { get; set; }
         public ICollection<UserTask> UserTasks { get; set; }

@@ -1,13 +1,14 @@
-﻿using System;
+﻿using ProjectManagementSystem.Entity.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjectManagementSystem.Entity.Entities
+namespace ProjectManagementSystem.Application.ViewModel.Projects
 {
-    public class Project : BaseModel
+    public class ProjectCreateViewModel
     {
         public string Title { get; set; }
 
@@ -15,10 +16,7 @@ namespace ProjectManagementSystem.Entity.Entities
 
         public bool IsPublic { get; set; }
 
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public int UserCreateID { get; set; }
 
-        public ICollection<UserProject> UserProjects { get; set; }
-
-        public ICollection<AppTask> Tasks { get; set; }
     }
 }

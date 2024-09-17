@@ -24,7 +24,9 @@ namespace ProjectManagementSystem.Application.CQRS.Users.Commands
         public string PhoneNumber { get; set; }
         public string Password { get; set; }
         public string ConfirmPassword { get; set; }
+        public string Country { get; set; }
         public string OTP { get; set; } 
+
     }
        
 
@@ -64,8 +66,6 @@ namespace ProjectManagementSystem.Application.CQRS.Users.Commands
             user.PasswordHash = PasswordHashGenerator.CreatePasswordHash(request.registerUserDTO.Password);
 
             user.OTP = OTPGenerator.CreateOTP();
-
-            user.IsEmailVerified = false;
 
             user = await _repository.AddAsync(user);
 

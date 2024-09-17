@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using ProjectManagementSystem.Application.CQRS.UserRoles.Commands;
 using ProjectManagementSystem.Application.CQRS.Users.Commands;
 using ProjectManagementSystem.Application.ViewModel.Users;
 using ProjectManagementSystem.Entity.Entities;
@@ -31,8 +30,6 @@ namespace ProjectManagementSystem.Application.Profiles
             
             CreateMap<ResetPasswordViewModel, ResetPasswordDto>().ReverseMap();
 
-
-            CreateMap<UserRoleDTO, UserRole>().ReverseMap();
         }
     }
 }

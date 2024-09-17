@@ -50,7 +50,7 @@ namespace ProjectManagementSystem.Application.CQRS.Users.Commands
                                .Where(u => u.Email == request.resetPasswordDto.Email)
                                .FirstOrDefaultAsync();
 
-            if (user is null)
+            if (user is null || !user.IsEmailVerified)
             {
                 return ResultDTO<bool>.Faliure("Email is incorrect!");
             }

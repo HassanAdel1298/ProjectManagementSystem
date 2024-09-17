@@ -18,7 +18,16 @@ namespace ProjectManagementSystem.Entity.Entities
         public int ProjectID { get; set; }
         public Project Project { get; set; }
 
-        public DateTime AssignedDate { get; set; }
+        public DateTime? AssignedDate { get; set; }
+
+        public UserRole Role { get; set; }
 
     }
+
+    public enum UserRole
+    {
+        Owner = 1,
+        User = 2
+    }
+
 }

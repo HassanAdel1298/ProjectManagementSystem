@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjectManagementSystem.Application.ViewModel.Roles
+namespace ProjectManagementSystem.Application.ViewModel.Projects
 {
-    public class RoleViewModel
+    public class ProjectSearchViewModel
     {
+        public int userID { get; set; }
         public string Name { get; set; }
     }
 }

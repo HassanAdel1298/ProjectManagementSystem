@@ -12,18 +12,18 @@ namespace ProjectManagementSystem.Application.Helpers
 {
     public static class TokenGenerator
     {
-        public static string GenerateToken(string id, string name, string roleID)
+        public static string GenerateToken(string UserID,string Email,string FullName)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim("ID", id),
-                    new Claim("RoleID", roleID),
-                    new Claim(ClaimTypes.Name, name)
+                    new Claim("UserID", UserID),
+                    new Claim(ClaimTypes.Email, Email),
+                    new Claim(ClaimTypes.Name, FullName),
                 }),
-                Expires = DateTime.Now.AddHours(1),
+                Expires = DateTime.Now.AddDays(3),
                 Issuer = "ProjectManagement",
                 Audience = "ProjectManagement-Users",
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Constants.SecretKey)), SecurityAlgorithms.HmacSha256Signature)

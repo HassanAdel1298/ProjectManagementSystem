@@ -31,24 +31,18 @@ namespace ProjectManagementSystem.Application.CQRS.Users.Commands
 
     public class SendVerificationEmailCommandHendler : IRequestHandler<SendVerificationEmailCommand, ResultDTO<bool>>
     {
-        private readonly SmtpSettings _smtpSettings;
-
-        public SendVerificationEmailCommandHendler(IOptions<SmtpSettings> smtpSettings)
-        {
-            _smtpSettings = smtpSettings.Value;
-        }
 
         public async Task<ResultDTO<bool>> Handle(SendVerificationEmailCommand request, CancellationToken cancellationToken)
         {
 
-            var senderEmail = _smtpSettings.Email;
-            var senderPassword = _smtpSettings.Password;
+            var senderEmail = "hassan.adel1298@gmail.com";
+            var senderPassword = "voxg zefr snvb zvsr";
 
 
-            var client = new SmtpClient(_smtpSettings.Host, _smtpSettings.Port)
+            var client = new SmtpClient("smtp.gmail.com", 587)
             {
                 Credentials = new NetworkCredential(senderEmail, senderPassword),
-                EnableSsl = _smtpSettings.EnableSsl
+                EnableSsl = true
 
             };
             var mailMessage = new MailMessage
