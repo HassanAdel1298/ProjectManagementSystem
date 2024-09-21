@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ProjectManagementSystem.Application.CQRS.Projects.Queries;
 using ProjectManagementSystem.Application.CQRS.UserProjects.Commands;
+using ProjectManagementSystem.Application.DTO.UserProjects;
 using ProjectManagementSystem.Application.ViewModel.Projects;
 using ProjectManagementSystem.Application.ViewModel.UserProject;
 using System;

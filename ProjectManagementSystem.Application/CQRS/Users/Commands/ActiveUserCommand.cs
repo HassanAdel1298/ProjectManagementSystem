@@ -16,22 +16,19 @@ namespace ProjectManagementSystem.Application.CQRS.Users.Commands
     public record ActiveUserCommand(int userID) : IRequest<ResultDTO<bool>>;
 
 
-    public class ActiveUserCommandHandler : IRequestHandler<ActiveUserCommand, ResultDTO<bool>>
+    public class ActiveUserCommandHandler : BaseRequestHandler<User , ActiveUserCommand, ResultDTO<bool>>
     {
-        IRepository<User> _repository;
-        IMediator _mediator;
 
-        public ActiveUserCommandHandler(IRepository<User> repository, IMediator mediator)
+        public ActiveUserCommandHandler(RequestParameters<User> requestParameters) : base(requestParameters)
         {
-            _repository = repository;
-            _mediator = mediator;
         }
 
-        public async Task<ResultDTO<bool>> Handle(ActiveUserCommand request, CancellationToken cancellationToken)
+        public override async Task<ResultDTO<bool>> Handle(ActiveUserCommand request, CancellationToken cancellationToken)
         {
 
             var user = await _repository.GetAllAsync()
-                               .Where(u => u.ID == request.userID)
+                               .Where(u => u.ID == request.userID
+                                      && u.IsEmailVerified)
                                .FirstOrDefaultAsync();
 
             if (user is null)

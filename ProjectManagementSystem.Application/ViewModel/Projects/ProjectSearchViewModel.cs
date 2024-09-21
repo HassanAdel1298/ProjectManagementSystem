@@ -8,7 +8,9 @@ namespace ProjectManagementSystem.Application.ViewModel.Projects
 {
     public class ProjectSearchViewModel
     {
-        public int userID { get; set; }
         public string Name { get; set; }
+
+        public int pageNumber { get; set; }
+        public int pageSize { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ProjectManagementSystem.Application.DTO;
+using ProjectManagementSystem.Application.DTO.Users;
 using ProjectManagementSystem.Application.Helpers;
 using ProjectManagementSystem.Entity.Entities;
 using ProjectManagementSystem.Repository.Interface;
@@ -15,32 +16,22 @@ namespace ProjectManagementSystem.Application.CQRS.Users.Commands
 {
     public record LoginUserCommand(LoginUserDTO loginUserDTO) : IRequest<ResultDTO<string>>;
 
-    public class LoginUserDTO 
+    public class LoginUserCommandHandler : BaseRequestHandler<User,LoginUserCommand, ResultDTO<string>>
     {
-        public string Email { get; set; }
-        public string Password { get; set; }
-    } 
 
-    public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, ResultDTO<string>>
-    {
-        IRepository<User> _repository;
-        IMediator _mediator;
-
-        public LoginUserCommandHandler(IRepository<User> repository, IMediator mediator)
+        public LoginUserCommandHandler(RequestParameters<User> requestParameters) : base(requestParameters)
         {
-            _repository = repository;
-            _mediator = mediator;
         }
 
-        public async Task<ResultDTO<string>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
+        public override async Task<ResultDTO<string>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
         {
             var user = await _repository.GetAllAsync()
-                                    .Where(u => u.Email == request.loginUserDTO.Email)
+                                    .Where(u => u.Email == request.loginUserDTO.Email
+                                            && u.IsEmailVerified)
                                     .FirstOrDefaultAsync();
 
             if (user is null 
-                || !BCrypt.Net.BCrypt.Verify(request.loginUserDTO.Password, user.PasswordHash) 
-                || !user.IsEmailVerified)
+                || !BCrypt.Net.BCrypt.Verify(request.loginUserDTO.Password, user.PasswordHash))
             {
                 return ResultDTO<string>.Faliure("Email or Password is incorrect");
             }

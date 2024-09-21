@@ -1,6 +1,7 @@
 ﻿
 
 using Autofac;
+using ProjectManagementSystem.Application.DTO;
 using ProjectManagementSystem.Entity.Data;
 using ProjectManagementSystem.Repository.Interface;
 using ProjectManagementSystem.Repository.Repositories;
@@ -17,7 +18,11 @@ namespace ProjectManagementSystem.Application
             builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>))
                                         .InstancePerLifetimeScope();
 
-            
+            builder.RegisterType<UserState>().InstancePerLifetimeScope();
+
+            builder.RegisterType<ControllereParameters>().InstancePerLifetimeScope();
+
+            builder.RegisterGeneric(typeof(RequestParameters<>)).InstancePerLifetimeScope();
         }
     }
 }

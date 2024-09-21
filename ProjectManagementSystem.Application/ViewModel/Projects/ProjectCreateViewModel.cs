@@ -16,7 +16,5 @@ namespace ProjectManagementSystem.Application.ViewModel.Projects
 
         public bool IsPublic { get; set; }
 
-        public int UserCreateID { get; set; }
-
     }
 }

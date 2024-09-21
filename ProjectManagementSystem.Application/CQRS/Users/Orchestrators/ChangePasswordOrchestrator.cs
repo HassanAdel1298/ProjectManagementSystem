@@ -1,6 +1,9 @@
 ﻿using MediatR;
 using ProjectManagementSystem.Application.CQRS.Users.Commands;
 using ProjectManagementSystem.Application.DTO;
+using ProjectManagementSystem.Application.DTO.Users;
+using ProjectManagementSystem.Application.Helpers;
+using ProjectManagementSystem.Entity.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,38 +15,36 @@ namespace ProjectManagementSystem.Application.CQRS.Users.Orchestrators
 
     public record ChangePasswordOrchestrator(string Email) : IRequest<ResultDTO<OTPAddedDTO>>;
 
-    public class ChangePasswordOrchestratorHandler : IRequestHandler<ChangePasswordOrchestrator
+    public class ChangePasswordOrchestratorHandler : BaseRequestHandler<User,ChangePasswordOrchestrator
                                                             , ResultDTO<OTPAddedDTO>>
     {
-        private readonly IMediator _mediator;
-        public ChangePasswordOrchestratorHandler(IMediator mediator)
+        public ChangePasswordOrchestratorHandler(RequestParameters<User> requestParameters) : base(requestParameters)
         {
-            _mediator = mediator;
         }
 
-        public async Task<ResultDTO<OTPAddedDTO>> Handle(ChangePasswordOrchestrator request, CancellationToken cancellationToken)
+        public override async Task<ResultDTO<OTPAddedDTO>> Handle(ChangePasswordOrchestrator request, CancellationToken cancellationToken)
         {
-            var resultDTO = await _mediator.Send(new AddOTPToEmailCommand(request.Email));
+            var resultAddOTPDTO = await _mediator.Send(new AddOTPToEmailCommand(request.Email));
 
-            if (!resultDTO.IsSuccess)
+            if (!resultAddOTPDTO.IsSuccess)
             {
-                return resultDTO;
+                return resultAddOTPDTO;
             }
 
             SendEmailDTO sendEmailDTO = new SendEmailDTO()
             {
-                ToEmail = resultDTO.Data.Email,
+                ToEmail = resultAddOTPDTO.Data.Email,
                 Subject = "Verify your email",
-                Body = $"Please verify your email address by OTP : {resultDTO.Data.OTP}"
+                Body = $"Please verify your email address by OTP : {resultAddOTPDTO.Data.OTP}"
             };
 
-   
+
 
             await _mediator.Send(new SendVerificationEmailCommand(sendEmailDTO));
 
 
 
-            return resultDTO;
+            return resultAddOTPDTO;
         }
     }
 }

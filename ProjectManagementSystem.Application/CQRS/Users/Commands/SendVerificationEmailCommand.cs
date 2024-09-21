@@ -8,26 +8,12 @@ using System.Text;
 using System.Threading.Tasks;
 using ProjectManagementSystem.Application.DTO;
 using Microsoft.Extensions.Options;
+using ProjectManagementSystem.Application.DTO.Users;
 
 namespace ProjectManagementSystem.Application.CQRS.Users.Commands
 {
     public record SendVerificationEmailCommand(SendEmailDTO SendEmailDTO) : IRequest<ResultDTO<bool>>;
 
-    public class SendEmailDTO
-    {
-        public string ToEmail {  get; set; }
-        public string Subject { get; set; }
-        public string Body { get; set; }
-    }
-
-    public class SmtpSettings
-    {
-        public string Host { get; set; }
-        public int Port { get; set; }
-        public bool EnableSsl { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
-    }
 
     public class SendVerificationEmailCommandHendler : IRequestHandler<SendVerificationEmailCommand, ResultDTO<bool>>
     {

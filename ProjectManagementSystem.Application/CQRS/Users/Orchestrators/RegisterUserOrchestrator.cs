@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using ProjectManagementSystem.Application.CQRS.Users.Commands;
 using ProjectManagementSystem.Application.DTO;
+using ProjectManagementSystem.Application.DTO.Users;
+using ProjectManagementSystem.Application.Helpers;
 using ProjectManagementSystem.Entity.Entities;
 using System;
 using System.Collections.Generic;
@@ -12,35 +14,33 @@ namespace ProjectManagementSystem.Application.CQRS.Users.Orchestrators
 {
     public record RegisterUserOrchestrator(RegisterUserDTO registerUserDTO) : IRequest<ResultDTO<RegisterUserDTO>>;
 
-    public class RegisterUserOrchestratorHandler : IRequestHandler<RegisterUserOrchestrator, ResultDTO<RegisterUserDTO>>
+    public class RegisterUserOrchestratorHandler : BaseRequestHandler<User ,RegisterUserOrchestrator, ResultDTO<RegisterUserDTO>>
     {
-        private readonly IMediator _mediator;
-        public RegisterUserOrchestratorHandler(IMediator mediator)
+        public RegisterUserOrchestratorHandler(RequestParameters<User> requestParameters) : base(requestParameters)
         {
-            _mediator = mediator;
         }
 
-        public async Task<ResultDTO<RegisterUserDTO>> Handle(RegisterUserOrchestrator request, CancellationToken cancellationToken)
+        public override async Task<ResultDTO<RegisterUserDTO>> Handle(RegisterUserOrchestrator request, CancellationToken cancellationToken)
         {
-            var resultDTO = await _mediator.Send(new RegisterUserCommand(request.registerUserDTO));
+            var resultRegisterUserDTO = await _mediator.Send(new RegisterUserCommand(request.registerUserDTO));
 
-            if (!resultDTO.IsSuccess)
+            if (!resultRegisterUserDTO.IsSuccess)
             {
-                return resultDTO;
+                return resultRegisterUserDTO;
             }
 
             SendEmailDTO sendEmailDTO = new SendEmailDTO()
             {
-                ToEmail = resultDTO.Data.Email,
+                ToEmail = resultRegisterUserDTO.Data.Email,
                 Subject = "Verify your email",
-                Body = $"Please verify your email address by OTP : {resultDTO.Data.OTP}"
+                Body = $"Please verify your email address by OTP : {resultRegisterUserDTO.Data.OTP}"
             };
     
 
             await _mediator.Send(new SendVerificationEmailCommand(sendEmailDTO));
 
 
-            return resultDTO;
+            return resultRegisterUserDTO;
         }
     }
 }

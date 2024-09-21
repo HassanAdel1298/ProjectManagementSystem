@@ -18,7 +18,6 @@ namespace ProjectManagementSystem.Entity.Data
         public DbSet<Project> Projects { get; set; }
         public DbSet<AppTask> Tasks { get; set; }
         public DbSet<UserProject> UserProjects { get; set; }
-        public DbSet<UserTask> UserTasks { get; set; }
 
     }
 }

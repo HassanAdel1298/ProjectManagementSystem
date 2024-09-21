@@ -1,23 +1,28 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProjectManagementSystem.Application.CQRS.Tasks.Queries;
 using ProjectManagementSystem.Application.CQRS.Users.Commands;
 using ProjectManagementSystem.Application.CQRS.Users.Orchestrators;
+using ProjectManagementSystem.Application.CQRS.Users.Queries;
+using ProjectManagementSystem.Application.DTO;
+using ProjectManagementSystem.Application.DTO.Tasks;
+using ProjectManagementSystem.Application.DTO.Users;
 using ProjectManagementSystem.Application.Helpers;
 using ProjectManagementSystem.Application.ViewModel;
+using ProjectManagementSystem.Application.ViewModel.Tasks;
 using ProjectManagementSystem.Application.ViewModel.Users;
 
 namespace ProjectManagementSystem.API.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : BaseController
     {
-        private readonly IMediator _mediator;
 
-        public UserController(IMediator mediator)
+        public UserController(ControllereParameters controllereParameters) : base(controllereParameters)
         {
-            _mediator = mediator;
         }
 
 
@@ -69,6 +74,7 @@ namespace ProjectManagementSystem.API.Controllers
 
 
         [HttpPost]
+        [Authorize]
         public async Task<ResultViewModel<bool>> ChangePassword(string Email)
         {
             
@@ -85,6 +91,7 @@ namespace ProjectManagementSystem.API.Controllers
 
 
         [HttpPost]
+        [Authorize]
         public async Task<ResultViewModel<bool>> ResetPassword(ResetPasswordViewModel resetPasswordViewModel)
         {
 
@@ -98,6 +105,56 @@ namespace ProjectManagementSystem.API.Controllers
             }
 
             return ResultViewModel<bool>.Sucess(true, resultDTO.Message);
+        }
+
+
+        [HttpGet]
+        [Authorize]
+        public async Task<ResultViewModel<IEnumerable<UsersReturnViewDTO>>> GetAllUsers(ViewUsersViewModel viewUsersViewModel)
+        {
+            int userID;
+            bool isUserID = int.TryParse(_userState.ID, out userID);
+
+            if (!isUserID)
+            {
+                return ResultViewModel<IEnumerable<UsersReturnViewDTO>>.Faliure("User isn't Login");
+            }
+
+            var userViewDTO = viewUsersViewModel.MapOne<UsersViewDTO>();
+
+            var resultDTO = await _mediator.Send(new ViewAllUsersQuery(userViewDTO));
+
+            if (!resultDTO.IsSuccess)
+            {
+                return ResultViewModel<IEnumerable<UsersReturnViewDTO>>.Faliure(resultDTO.Message);
+            }
+
+            return ResultViewModel<IEnumerable<UsersReturnViewDTO>>.Sucess(resultDTO.Data, resultDTO.Message);
+        }
+
+
+        [HttpPost]
+        [Authorize]
+        public async Task<ResultViewModel<IEnumerable<UsersReturnViewDTO>>> SearchUsersByName(UsersSearchViewModel usersSearchViewModel)
+        {
+            int userID;
+            bool isUserID = int.TryParse(_userState.ID, out userID);
+
+            if (!isUserID)
+            {
+                return ResultViewModel<IEnumerable<UsersReturnViewDTO>>.Faliure("User isn't Login");
+            }
+
+            var userSearchDTO = usersSearchViewModel.MapOne<UsersSearchDTO>();
+
+            var resultDTO = await _mediator.Send(new SearchUsersByNameQuery(userSearchDTO));
+
+            if (!resultDTO.IsSuccess)
+            {
+                return ResultViewModel<IEnumerable<UsersReturnViewDTO>>.Faliure(resultDTO.Message);
+            }
+
+            return ResultViewModel<IEnumerable<UsersReturnViewDTO>>.Sucess(resultDTO.Data, resultDTO.Message);
         }
 
     }

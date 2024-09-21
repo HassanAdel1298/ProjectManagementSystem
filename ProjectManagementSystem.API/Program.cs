@@ -43,9 +43,12 @@ namespace ProjectManagementSystem.API
             builder.Host.ConfigureContainer<ContainerBuilder>(builder =>
                 builder.RegisterModule(new AutoFacModule()));
 
+
             builder.Services.AddAutoMapper(typeof(ProjectProfile));
             builder.Services.AddAutoMapper(typeof(UserProfile)); 
-            builder.Services.AddAutoMapper(typeof(UserProjectProfile));
+            builder.Services.AddAutoMapper(typeof(UserProjectProfile)); 
+            builder.Services.AddAutoMapper(typeof(TaskProfile));
+
 
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly
                                             (typeof(ViewAllProjectsQuery).Assembly));
@@ -69,12 +72,46 @@ namespace ProjectManagementSystem.API
                 };
             });
 
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please enter JWT with Bearer into field",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+
+                        },
+                        new string[] {}
+                    }
+                });
+            });
+
             builder.Services.AddAuthorization();
 
+            builder.Services.AddHttpContextAccessor();
 
             var app = builder.Build();
 
             MapperHelper.Mapper = app.Services.GetService<IMapper>();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
 
             // Configure the HTTP request pipeline.
@@ -85,9 +122,6 @@ namespace ProjectManagementSystem.API
             }
 
             app.UseHttpsRedirection();
-
-            app.UseAuthorization();
-
 
             app.MapControllers();
 

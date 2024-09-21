@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystem.Application.DTO;
+using ProjectManagementSystem.Application.DTO.Projects;
 using ProjectManagementSystem.Application.Helpers;
 using ProjectManagementSystem.Entity.Entities;
 using ProjectManagementSystem.Repository.Interface;
@@ -10,29 +11,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjectManagementSystem.Application.CQRS.Projects.Commands
+namespace ProjectManagementSystem.Application.CQRS.UserProjects.Commands
 {
 
-    public record ManageProjectToUserCommand(ProjectCreateDTO projectDTO) : IRequest<ResultDTO<bool>>;
+    public record ManageProjectToOwnerCommand(ProjectCreateDTO projectDTO) : IRequest<ResultDTO<bool>>;
 
- 
 
-    public class ManageProjectToUserCommandHandler : IRequestHandler<ManageProjectToUserCommand, ResultDTO<bool>>
+
+    public class ManageProjectToOwnerCommandHandler : BaseRequestHandler<UserProject, ManageProjectToOwnerCommand, ResultDTO<bool>>
     {
-        IRepository<UserProject> _repository;
-        IMediator _mediator;
 
-        public ManageProjectToUserCommandHandler(IRepository<UserProject> repository, IMediator mediator)
+        public ManageProjectToOwnerCommandHandler(RequestParameters<UserProject> requestParameters) : base(requestParameters)
         {
-            _repository = repository;
-            _mediator = mediator;
         }
 
-        public async Task<ResultDTO<bool>> Handle(ManageProjectToUserCommand request, CancellationToken cancellationToken)
+        public override async Task<ResultDTO<bool>> Handle(ManageProjectToOwnerCommand request, CancellationToken cancellationToken)
         {
             var result = await _repository.GetAllAsync()
-                               .Where(up => up.ProjectID == request.projectDTO.ID 
-                                        && up.UserID == request.projectDTO.UserCreateID)
+                               .Where(up => up.ProjectID == request.projectDTO.ID
+                                        && up.UserID == request.projectDTO.UserCreateID
+                                        && up.Role == UserRole.Owner)
                                .FirstOrDefaultAsync();
 
             if (result is not null)

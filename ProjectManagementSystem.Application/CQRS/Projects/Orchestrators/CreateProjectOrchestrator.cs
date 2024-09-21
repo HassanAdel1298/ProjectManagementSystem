@@ -1,7 +1,11 @@
 ﻿using MediatR;
 using ProjectManagementSystem.Application.CQRS.Projects.Commands;
+using ProjectManagementSystem.Application.CQRS.UserProjects.Commands;
 using ProjectManagementSystem.Application.CQRS.Users.Commands;
 using ProjectManagementSystem.Application.DTO;
+using ProjectManagementSystem.Application.DTO.Projects;
+using ProjectManagementSystem.Application.Helpers;
+using ProjectManagementSystem.Entity.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,32 +17,34 @@ namespace ProjectManagementSystem.Application.CQRS.Projects.Orchestrators
 
     public record CreateProjectOrchestrator(ProjectCreateDTO projectDTO) : IRequest<ResultDTO<ProjectCreateDTO>>;
 
-    public class CreateProjectOrchestratorHandler : IRequestHandler<CreateProjectOrchestrator, ResultDTO<ProjectCreateDTO>>
+    public class CreateProjectOrchestratorHandler : BaseRequestHandler<Project , CreateProjectOrchestrator, ResultDTO<ProjectCreateDTO>>
     {
-        private readonly IMediator _mediator;
-        public CreateProjectOrchestratorHandler(IMediator mediator)
+        public CreateProjectOrchestratorHandler(RequestParameters<Project> requestParameters) : base(requestParameters)
         {
-            _mediator = mediator;
         }
 
-        public async Task<ResultDTO<ProjectCreateDTO>> Handle(CreateProjectOrchestrator request, CancellationToken cancellationToken)
+        public override async Task<ResultDTO<ProjectCreateDTO>> Handle(CreateProjectOrchestrator request, CancellationToken cancellationToken)
         {
-            var resultDTO = await _mediator.Send(new CreateProjectCommand(request.projectDTO));
+            var resultCreateProjectDTO = await _mediator.Send(new CreateProjectCommand(request.projectDTO));
 
-            if (!resultDTO.IsSuccess)
+            if (!resultCreateProjectDTO.IsSuccess)
             {
-                return resultDTO;
+                return resultCreateProjectDTO;
             }
 
-            resultDTO.Data.UserCreateID = request.projectDTO.UserCreateID;
+            resultCreateProjectDTO.Data.UserCreateID = request.projectDTO.UserCreateID;
 
-            await _mediator.Send(new ManageProjectToUserCommand(resultDTO.Data));
-            
-            
-            await _mediator.Send(new ActiveUserCommand(resultDTO.Data.UserCreateID));
+            await _mediator.Send(new ManageProjectToOwnerCommand(resultCreateProjectDTO.Data));
 
 
-            return resultDTO;
+            var resultActiveUserDTO = await _mediator.Send(new ActiveUserCommand(resultCreateProjectDTO.Data.UserCreateID));
+
+            if (!resultActiveUserDTO.IsSuccess)
+            {
+                return ResultDTO<ProjectCreateDTO>.Faliure(resultActiveUserDTO.Message);
+            }
+
+            return resultCreateProjectDTO;
         }
     }
 }

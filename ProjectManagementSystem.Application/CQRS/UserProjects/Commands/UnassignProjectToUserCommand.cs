@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystem.Application.DTO;
+using ProjectManagementSystem.Application.DTO.UserProjects;
+using ProjectManagementSystem.Application.Helpers;
 using ProjectManagementSystem.Entity.Entities;
 using ProjectManagementSystem.Repository.Interface;
 using System;
@@ -14,25 +16,15 @@ namespace ProjectManagementSystem.Application.CQRS.UserProjects.Commands
 
     public record UnassignProjectToUserCommand(UnassignProjectDTO unassignProjectDTO) : IRequest<ResultDTO<bool>>;
 
-    public class UnassignProjectDTO
-    {
-        public int UserCreateID { get; set; }
-        public int UserUnassignID { get; set; }
-        public int ProjectID { get; set; }
-    }
 
-    public class UnassignProjectToUserCommandHandler : IRequestHandler<UnassignProjectToUserCommand, ResultDTO<bool>>
+    public class UnassignProjectToUserCommandHandler : BaseRequestHandler<UserProject , UnassignProjectToUserCommand, ResultDTO<bool>>
     {
-        IRepository<UserProject> _repository;
-        IMediator _mediator;
 
-        public UnassignProjectToUserCommandHandler(IRepository<UserProject> repository, IMediator mediator)
+        public UnassignProjectToUserCommandHandler(RequestParameters<UserProject> requestParameters) : base(requestParameters)
         {
-            _repository = repository;
-            _mediator = mediator;
         }
 
-        public async Task<ResultDTO<bool>> Handle(UnassignProjectToUserCommand request, CancellationToken cancellationToken)
+        public override async Task<ResultDTO<bool>> Handle(UnassignProjectToUserCommand request, CancellationToken cancellationToken)
         {
             var manageProject = await _repository.GetAllAsync()
                                .Where(up => up.ProjectID == request.unassignProjectDTO.ProjectID

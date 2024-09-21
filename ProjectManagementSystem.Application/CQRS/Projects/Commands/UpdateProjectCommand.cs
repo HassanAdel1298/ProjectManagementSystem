@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystem.Application.DTO;
+using ProjectManagementSystem.Application.DTO.Projects;
 using ProjectManagementSystem.Application.Helpers;
 using ProjectManagementSystem.Entity.Entities;
 using ProjectManagementSystem.Repository.Interface;
@@ -15,29 +16,27 @@ namespace ProjectManagementSystem.Application.CQRS.Projects.Commands
 
     public record UpdateProjectCommand(ProjectUpdateDTO projectDTO) : IRequest<ResultDTO<ProjectUpdateDTO>>;
 
-    public class ProjectUpdateDTO
-    {
-        public int ID { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public bool IsPublic { get; set; }
-    }
+    
 
-    public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand, ResultDTO<ProjectUpdateDTO>>
+    public class UpdateProjectCommandHandler : BaseRequestHandler<Project ,UpdateProjectCommand, ResultDTO<ProjectUpdateDTO>>
     {
-        IRepository<Project> _repository;
-        IMediator _mediator;
 
-        public UpdateProjectCommandHandler(IRepository<Project> repository, IMediator mediator)
+        public UpdateProjectCommandHandler(RequestParameters<Project> requestParameters) : base(requestParameters)
         {
-            _repository = repository;
-            _mediator = mediator;
         }
-
-        public async Task<ResultDTO<ProjectUpdateDTO>> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
+        public override async Task<ResultDTO<ProjectUpdateDTO>> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
         {
             var result = await _repository.GetAllAsync()
-                                        .Where(p => p.ID == request.projectDTO.ID)
+                                        .Where(p => p.ID == request.projectDTO.ID &&
+                                        p.UserProjects.Contains
+                                            (p.UserProjects.Where
+                                                (
+                                                up => up.UserID == request.projectDTO.UserCreateID
+                                                && up.Role == UserRole.Owner
+                                                && up.IsDeleted != true
+                                                ).FirstOrDefault()
+                                            )
+                                        )
                                         .FirstOrDefaultAsync();
 
             if (result is null)

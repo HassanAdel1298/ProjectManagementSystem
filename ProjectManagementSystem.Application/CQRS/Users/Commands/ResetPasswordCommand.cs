@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystem.Application.DTO;
+using ProjectManagementSystem.Application.DTO.Users;
 using ProjectManagementSystem.Application.Helpers;
 using ProjectManagementSystem.Entity.Entities;
 using ProjectManagementSystem.Repository.Interface;
@@ -16,30 +17,16 @@ namespace ProjectManagementSystem.Application.CQRS.Users.Commands
 
     public record ResetPasswordCommand(ResetPasswordDto resetPasswordDto) : IRequest<ResultDTO<bool>>;
     
-
-    public class ResetPasswordDto
-    {
-        public string Email { get; set; }
-        public string OTP { get; set; }
-        public string NewPassword { get; set; }
-        public string ConfirmNewPassword { get; set; }
-
-    }
-        
     
 
-    public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand, ResultDTO<bool>>
+    public class ResetPasswordCommandHandler : BaseRequestHandler<User, ResetPasswordCommand, ResultDTO<bool>>
     {
-        IRepository<User> _repository;
-        IMediator _mediator;
 
-        public ResetPasswordCommandHandler(IRepository<User> repository, IMediator mediator)
+        public ResetPasswordCommandHandler(RequestParameters<User> requestParameters) : base(requestParameters)
         {
-            _repository = repository;
-            _mediator = mediator;
         }
 
-        public async Task<ResultDTO<bool>> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
+        public override async Task<ResultDTO<bool>> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
         {
             if (request.resetPasswordDto.NewPassword != request.resetPasswordDto.ConfirmNewPassword)
             {
@@ -47,10 +34,11 @@ namespace ProjectManagementSystem.Application.CQRS.Users.Commands
             }
 
             var user = await _repository.GetAllAsync()
-                               .Where(u => u.Email == request.resetPasswordDto.Email)
+                               .Where(u => u.Email == request.resetPasswordDto.Email
+                                        && u.IsEmailVerified )
                                .FirstOrDefaultAsync();
 
-            if (user is null || !user.IsEmailVerified)
+            if (user is null)
             {
                 return ResultDTO<bool>.Faliure("Email is incorrect!");
             }

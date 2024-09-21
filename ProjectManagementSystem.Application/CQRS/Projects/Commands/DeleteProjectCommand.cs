@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystem.Application.CQRS.Projects.Queries;
 using ProjectManagementSystem.Application.DTO;
+using ProjectManagementSystem.Application.DTO.Projects;
+using ProjectManagementSystem.Application.Helpers;
 using ProjectManagementSystem.Entity.Entities;
 using ProjectManagementSystem.Repository.Interface;
 using System;
@@ -13,23 +15,28 @@ using System.Threading.Tasks;
 namespace ProjectManagementSystem.Application.CQRS.Projects.Commands
 {
 
-    public record DeleteProjectCommand(int projectID) : IRequest<ResultDTO<bool>>;
+    public record DeleteProjectCommand(ProjectDeleteDTO projectDTO) : IRequest<ResultDTO<bool>>;
 
-    public class DeleteProjectCommandHandler : IRequestHandler<DeleteProjectCommand, ResultDTO<bool>>
+    public class DeleteProjectCommandHandler : BaseRequestHandler<Project , DeleteProjectCommand, ResultDTO<bool>>
     {
-        IRepository<Project> _repository;
-        IMediator _mediator;
 
-        public DeleteProjectCommandHandler(IRepository<Project> repository, IMediator mediator)
+        public DeleteProjectCommandHandler(RequestParameters<Project> requestParameters) : base(requestParameters)
         {
-            _repository = repository;
-            _mediator = mediator;
         }
 
-        public async Task<ResultDTO<bool>> Handle(DeleteProjectCommand request, CancellationToken cancellationToken)
+        public override async Task<ResultDTO<bool>> Handle(DeleteProjectCommand request, CancellationToken cancellationToken)
         {
             var project = await _repository.GetAllAsync()
-                                        .Where( p => p.ID == request.projectID)
+                                        .Where(p => p.ID == request.projectDTO.ID &&
+                                        p.UserProjects.Contains
+                                            (p.UserProjects.Where
+                                                (
+                                                up => up.UserID == request.projectDTO.UserCreateID
+                                                && up.Role == UserRole.Owner
+                                                && up.IsDeleted != true
+                                                ).FirstOrDefault()
+                                            )
+                                        )
                                         .FirstOrDefaultAsync();
 
             if (project is null)
@@ -38,6 +45,8 @@ namespace ProjectManagementSystem.Application.CQRS.Projects.Commands
             }
 
             _repository.DeleteAsync(project);
+
+            await _repository.SaveChangesAsync();
 
             return ResultDTO<bool>.Sucess(true, "Delete Project successfully!");
         }

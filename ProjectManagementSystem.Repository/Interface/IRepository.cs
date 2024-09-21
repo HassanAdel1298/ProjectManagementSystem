@@ -8,6 +8,7 @@ namespace ProjectManagementSystem.Repository.Interface
     {
        
         IQueryable<T> GetAllAsync();
+        IQueryable<T> GetAllPaginationAsync(int pageNumber, int pageSize);
         Task<T> GetByIDAsync(int id);
         Task<T> AddAsync(T entity);
         Task<T> UpdateAsync(T entity);

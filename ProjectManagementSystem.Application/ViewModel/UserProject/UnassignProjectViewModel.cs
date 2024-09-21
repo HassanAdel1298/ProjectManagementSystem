@@ -8,7 +8,6 @@ namespace ProjectManagementSystem.Application.ViewModel.UserProject
 {
     public class UnassignProjectViewModel
     {
-        public int UserCreateID { get; set; }
         public int UserUnassignID { get; set; }
         public int ProjectID { get; set; }
     }

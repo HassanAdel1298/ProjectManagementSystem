@@ -8,7 +8,6 @@ namespace ProjectManagementSystem.Application.ViewModel.UserProject
 {
     public class AssignProjectViewModel
     {
-        public int UserCreateID { get; set; }
         public int UserAssignID { get; set; }
         public int ProjectID { get; set; }
     }

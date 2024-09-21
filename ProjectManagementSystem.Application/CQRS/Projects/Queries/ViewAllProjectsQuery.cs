@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystem.Application.DTO;
+using ProjectManagementSystem.Application.DTO.Projects;
 using ProjectManagementSystem.Application.Helpers;
 using ProjectManagementSystem.Entity.Entities;
 using ProjectManagementSystem.Repository.Interface;
@@ -13,50 +14,45 @@ using System.Threading.Tasks;
 namespace ProjectManagementSystem.Application.CQRS.Projects.Queries
 {
 
-    public record ViewAllProjectsQuery(int userID) : IRequest<ResultDTO<IEnumerable<ProjectViewDTO>>>;
+    public record ViewAllProjectsQuery(ProjectViewDTO projectViewDTO) : IRequest<ResultDTO<IEnumerable<ProjectReturnViewDTO>>>;
 
-    public class ProjectViewDTO
+
+    public class ViewAllProjectsQueryHandler : BaseRequestHandler<Project , ViewAllProjectsQuery, ResultDTO<IEnumerable<ProjectReturnViewDTO>>>
     {
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public bool IsPublic { get; set; }
-        public int NumUsers { get; set; }
-        public int NumTasks { get; set; }
-        public DateTime CreatedDate { get; set; }
 
-    }
-
-    public class ViewAllProjectsQueryHandler : IRequestHandler<ViewAllProjectsQuery, ResultDTO<IEnumerable<ProjectViewDTO>>>
-    {
-        IRepository<Project> _repository;
-        IMediator _mediator;
-
-        public ViewAllProjectsQueryHandler(IRepository<Project> repository, IMediator mediator)
+        public ViewAllProjectsQueryHandler(RequestParameters<Project> requestParameters) : base(requestParameters)
         {
-            _repository = repository;
-            _mediator = mediator;
         }
 
-        public async Task<ResultDTO<IEnumerable<ProjectViewDTO>>> Handle(ViewAllProjectsQuery request, CancellationToken cancellationToken)
+        public override async Task<ResultDTO<IEnumerable<ProjectReturnViewDTO>>> Handle(ViewAllProjectsQuery request, CancellationToken cancellationToken)
         {
-            var projectsDTO = await _repository.GetAllAsync()
+            var projectsDTO = await _repository.GetAllPaginationAsync
+                                        (
+                                            request.projectViewDTO.pageNumber,
+                                            request.projectViewDTO.pageSize
+                                        )
                                         .Where(p => p.UserProjects.Contains
                                             (p.UserProjects.Where
-                                                (up => up.UserID == request.userID).FirstOrDefault()
+                                                (
+                                                up => up.UserID == request.projectViewDTO.userID
+                                                && up.IsDeleted != true
+                                                ).FirstOrDefault()
                                             )
                                         )
-                                        .Select(p => new ProjectViewDTO()
+                                        .Select(p => new ProjectReturnViewDTO()
                                         {
                                             Title = p.Title,
                                             Description = p.Description,
                                             IsPublic = p.IsPublic,
                                             CreatedDate = p.CreatedDate,
-                                            NumUsers = p.UserProjects.Count(),
-                                            NumTasks = p.Tasks.Count(),
+                                            NumUsers = p.UserProjects
+                                                            .Count(up => up.IsDeleted != true),
+                                            NumTasks = p.Tasks
+                                                            .Count(t => t.IsDeleted != true)
                                         }).ToListAsync();
 
 
-            return ResultDTO<IEnumerable<ProjectViewDTO>>.Sucess(projectsDTO, "View Projects successfully!");
+            return ResultDTO<IEnumerable<ProjectReturnViewDTO>>.Sucess(projectsDTO, "View Projects successfully!");
         }
     }
 }

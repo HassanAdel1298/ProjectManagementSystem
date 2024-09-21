@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystem.Application.DTO;
+using ProjectManagementSystem.Application.DTO.Projects;
 using ProjectManagementSystem.Application.Helpers;
 using ProjectManagementSystem.Entity.Entities;
 using ProjectManagementSystem.Repository.Interface;
@@ -15,27 +16,16 @@ namespace ProjectManagementSystem.Application.CQRS.Projects.Commands
 
     public record CreateProjectCommand(ProjectCreateDTO projectDTO) : IRequest<ResultDTO<ProjectCreateDTO>>;
 
-    public class ProjectCreateDTO
-    {
-        public int ID { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public bool IsPublic { get; set; }
-        public int UserCreateID { get; set; }
-    }
+    
 
-    public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand, ResultDTO<ProjectCreateDTO>>
+    public class CreateProjectCommandHandler : BaseRequestHandler<Project , CreateProjectCommand, ResultDTO<ProjectCreateDTO>>
     {
-        IRepository<Project> _repository;
-        IMediator _mediator;
 
-        public CreateProjectCommandHandler(IRepository<Project> repository, IMediator mediator)
+        public CreateProjectCommandHandler(RequestParameters<Project> requestParameters) : base(requestParameters)
         {
-            _repository = repository;
-            _mediator = mediator;
         }
 
-        public async Task<ResultDTO<ProjectCreateDTO>> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
+        public override async Task<ResultDTO<ProjectCreateDTO>> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
         {
             
 

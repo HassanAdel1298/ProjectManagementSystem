@@ -37,6 +37,16 @@ namespace ProjectManagementSystem.Repository.Repositories
             await _context.Set<T>().AddRangeAsync(entities);
         }
 
+        public IQueryable<T> GetAllPaginationAsync(int pageNumber, int pageSize)
+        {
+            var query = _context.Set<T>()
+                .Where(a => a.IsDeleted != true)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize);
+
+            return query;
+        }
+
         public IQueryable<T> GetAllAsync()
         {
             return _context.Set<T>().Where(a => a.IsDeleted != true);

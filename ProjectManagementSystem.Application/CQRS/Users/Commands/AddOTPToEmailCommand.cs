@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystem.Application.DTO;
+using ProjectManagementSystem.Application.DTO.Users;
 using ProjectManagementSystem.Application.Helpers;
 using ProjectManagementSystem.Entity.Entities;
 using ProjectManagementSystem.Repository.Interface;
@@ -15,30 +16,21 @@ namespace ProjectManagementSystem.Application.CQRS.Users.Commands
 
 
     public record AddOTPToEmailCommand(string Email) : IRequest<ResultDTO<OTPAddedDTO>>;
-
-    public class OTPAddedDTO
-    {
-       public string Email { get; set; }
-       public string OTP { get; set; }
-    }
        
 
-    public class AddOTPToEmailCommandHandler : IRequestHandler<AddOTPToEmailCommand, ResultDTO<OTPAddedDTO>>
+    public class AddOTPToEmailCommandHandler : BaseRequestHandler<User ,AddOTPToEmailCommand, ResultDTO<OTPAddedDTO>>
     {
-        IRepository<User> _repository;
-        IMediator _mediator;
 
-        public AddOTPToEmailCommandHandler(IRepository<User> repository, IMediator mediator)
+        public AddOTPToEmailCommandHandler(RequestParameters<User> requestParameters) : base(requestParameters)
         {
-            _repository = repository;
-            _mediator = mediator;
         }
 
-        public async Task<ResultDTO<OTPAddedDTO>> Handle(AddOTPToEmailCommand request, CancellationToken cancellationToken)
+        public override async Task<ResultDTO<OTPAddedDTO>> Handle(AddOTPToEmailCommand request, CancellationToken cancellationToken)
         {
 
             var user = await _repository.GetAllAsync()
-                               .Where(u => u.Email == request.Email)
+                               .Where(u => u.Email == request.Email
+                                       && u.IsEmailVerified)
                                .FirstOrDefaultAsync();
 
             if (user is null)

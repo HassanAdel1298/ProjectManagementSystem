@@ -19,8 +19,8 @@ namespace ProjectManagementSystem.Entity.Entities
         public string PhoneNumber { get; set; }
         public string Country { get; set; }
         public bool IsActive { get; set; } = false;
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
         public ICollection<UserProject> UserProjects { get; set; }
         public ICollection<AppTask> Tasks { get; set; }
-        public ICollection<UserTask> UserTasks { get; set; }
     }
 }
