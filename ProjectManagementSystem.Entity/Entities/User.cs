@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +22,11 @@ namespace ProjectManagementSystem.Entity.Entities
         public bool IsActive { get; set; } = false;
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public ICollection<UserProject> UserProjects { get; set; }
-        public ICollection<AppTask> Tasks { get; set; }
+
+        [InverseProperty("UserCreate")]
+        public ICollection<AppTask> CreateTasks { get; set; }
+
+        [InverseProperty("UserAssign")]
+        public ICollection<AppTask> AssignTasks { get; set; }
     }
 }

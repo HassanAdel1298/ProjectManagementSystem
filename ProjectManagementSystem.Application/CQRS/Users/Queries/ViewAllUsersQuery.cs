@@ -31,6 +31,7 @@ namespace ProjectManagementSystem.Application.CQRS.Users.Queries
                                             request.userViewDTO.pageNumber,
                                             request.userViewDTO.pageSize
                                         )
+                                        .Where(u => u.IsEmailVerified)
                                         .Select(u => new UsersReturnViewDTO()
                                         {
                                             FirstName = u.FirstName,

@@ -27,8 +27,8 @@ namespace ProjectManagementSystem.Application.CQRS.Tasks.Commands
         {
             var task = await _repository.GetAllAsync()
                                         .Where(
-                                                p => p.ID == request.taskDTO.ID
-                                                && p.UserCreateID == request.taskDTO.UserCreateID
+                                                t => t.ID == request.taskDTO.ID
+                                                && t.UserCreateID == request.taskDTO.UserCreateID
                                         )
                                         .FirstOrDefaultAsync();
 

@@ -52,7 +52,15 @@ namespace ProjectManagementSystem.Application.CQRS.Tasks.Orchestrators
             {
                 return ResultDTO<TaskCreateDTO>.Faliure(resultIsManagedProject.Message);
             }
-            
+
+            var resultIsUsedProject = await _mediator.Send(new IsUsedProjectToUserCommand(
+                                            request.taskDTO.ProjectID, request.taskDTO.UserAssignID));
+
+            if (!resultIsUsedProject.IsSuccess)
+            {
+                return ResultDTO<TaskCreateDTO>.Faliure(resultIsUsedProject.Message);
+            }
+
 
 
             var resultCreateTaskDTO = await _mediator.Send(new CreateTaskCommand(request.taskDTO));

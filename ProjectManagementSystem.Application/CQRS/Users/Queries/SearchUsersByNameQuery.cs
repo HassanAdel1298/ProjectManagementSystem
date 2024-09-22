@@ -32,7 +32,10 @@ namespace ProjectManagementSystem.Application.CQRS.Users.Queries
                                             request.userSearchDTO.pageNumber,
                                             request.userSearchDTO.pageSize
                                         )
-                                        .Where(u => u.FullName == request.userSearchDTO.Name)
+                                        .Where(
+                                            u => u.FullName == request.userSearchDTO.Name
+                                            && u.IsEmailVerified
+                                            )
                                         .Select(u => new UsersReturnViewDTO()
                                         {
                                             FirstName = u.FirstName,

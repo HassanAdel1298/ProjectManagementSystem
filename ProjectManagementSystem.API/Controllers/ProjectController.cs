@@ -55,7 +55,7 @@ namespace ProjectManagementSystem.API.Controllers
         }
 
 
-        [HttpGet]
+        [HttpPost]
         [Authorize]
         public async Task<ResultViewModel<IEnumerable<ProjectReturnViewDTO>>> GetAllProjects(ViewProjectViewModel viewProjectViewModel)
         {

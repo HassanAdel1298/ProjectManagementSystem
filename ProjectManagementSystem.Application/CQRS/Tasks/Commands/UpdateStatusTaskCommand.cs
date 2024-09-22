@@ -27,14 +27,14 @@ namespace ProjectManagementSystem.Application.CQRS.Tasks.Commands
         public override async Task<ResultDTO<TaskUpdateStatusDTO>> Handle(UpdateStatusTaskCommand request, CancellationToken cancellationToken)
         {
             var task = await _repository.GetAllAsync()
-                                        .Where(p => p.ID == request.taskDTO.ID
-                                                && p.UserCreateID == request.taskDTO.UserCreateID
+                                        .Where(t => t.ID == request.taskDTO.ID
+                                                && t.UserCreateID == request.taskDTO.UserCreateID
                                         )
                                         .FirstOrDefaultAsync();
 
             if (task is null)
             {
-                return ResultDTO<TaskUpdateStatusDTO>.Faliure("Task ID Not Found!");
+                return ResultDTO<TaskUpdateStatusDTO>.Faliure("Task ID Not Found or isn't managed this Task!");
             }
 
 

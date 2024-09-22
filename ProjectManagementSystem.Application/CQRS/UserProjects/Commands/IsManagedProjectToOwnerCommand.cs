@@ -36,7 +36,7 @@ namespace ProjectManagementSystem.Application.CQRS.UserProjects.Commands
                 return ResultDTO<bool>.Faliure("User Create ID isn't managed this project!");
             }
 
-            return ResultDTO<bool>.Sucess(true, "User ID is already managed this project");
+            return ResultDTO<bool>.Sucess(true, "User Create ID is already managed this project");
         }
 
     }

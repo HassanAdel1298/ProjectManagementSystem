@@ -55,7 +55,7 @@ namespace ProjectManagementSystem.API.Controllers
 
 
 
-        [HttpGet]
+        [HttpPost]
         [Authorize]
         public async Task<ResultViewModel<IEnumerable<TaskReturnViewDTO>>> GetAllTasks(ViewTaskViewModel viewTaskViewModel)
         {
@@ -193,7 +193,29 @@ namespace ProjectManagementSystem.API.Controllers
             return ResultViewModel<TaskUpdateStatusDTO>.Sucess(resultDTO.Data, resultDTO.Message);
         }
 
-        
+
+        [HttpGet]
+        [Authorize]
+        public async Task<ResultViewModel<TaskReturnViewGroupByStatusDTO>> GetAllTasksByProjectGroupByStatus(int projectID)
+        {
+            int userID;
+            bool isUserID = int.TryParse(_userState.ID, out userID);
+
+            if (!isUserID)
+            {
+                return ResultViewModel<TaskReturnViewGroupByStatusDTO>.Faliure("User isn't Login");
+            }
+
+            var resultDTO = await _mediator.Send(new GetAllTasksGroupByStatusOrchestrator(projectID));
+
+            if (!resultDTO.IsSuccess)
+            {
+                return ResultViewModel<TaskReturnViewGroupByStatusDTO>.Faliure(resultDTO.Message);
+            }
+
+            return ResultViewModel<TaskReturnViewGroupByStatusDTO>.Sucess(resultDTO.Data, resultDTO.Message);
+        }
+
 
 
     }

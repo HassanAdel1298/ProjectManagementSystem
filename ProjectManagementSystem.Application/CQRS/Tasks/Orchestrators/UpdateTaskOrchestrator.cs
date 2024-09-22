@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ProjectManagementSystem.Application.CQRS.Tasks.Queries;
 
 namespace ProjectManagementSystem.Application.CQRS.Tasks.Orchestrators
 {
@@ -36,7 +37,20 @@ namespace ProjectManagementSystem.Application.CQRS.Tasks.Orchestrators
                 return ResultDTO<TaskUpdateDTO>.Faliure(resultIsVerifiedAssignUser.Message);
             }
 
+            var resultGetProjectIDByTask = await _mediator.Send(new GetProjectIDByTaskQuery(request.taskDTO.ID));
 
+            if (!resultGetProjectIDByTask.IsSuccess)
+            {
+                return ResultDTO<TaskUpdateDTO>.Faliure(resultGetProjectIDByTask.Message);
+            }
+
+            var resultIsUsedProject = await _mediator.Send(new IsUsedProjectToUserCommand(
+                                            resultGetProjectIDByTask.Data, request.taskDTO.UserAssignID));
+
+            if (!resultIsUsedProject.IsSuccess)
+            {
+                return ResultDTO<TaskUpdateDTO>.Faliure(resultIsUsedProject.Message);
+            }
 
             var resultUpdateTaskDTO = await _mediator.Send(new UpdateTaskCommand(request.taskDTO));
 
