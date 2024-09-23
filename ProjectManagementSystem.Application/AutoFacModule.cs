@@ -23,6 +23,7 @@ namespace ProjectManagementSystem.Application
             builder.RegisterType<ControllereParameters>().InstancePerLifetimeScope();
 
             builder.RegisterGeneric(typeof(RequestParameters<>)).InstancePerLifetimeScope();
+
         }
     }
 }

@@ -8,7 +8,7 @@ namespace ProjectManagementSystem.API.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class BaseController : ControllerBase
+    public class BaseController : ControllerBase 
     {
         protected readonly IMediator _mediator;
         protected readonly UserState _userState;

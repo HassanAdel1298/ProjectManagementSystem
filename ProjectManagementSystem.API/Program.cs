@@ -15,6 +15,7 @@ using ProjectManagementSystem.Entity.Data;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
+using ProjectManagementSystem.API.Services;
 
 
 namespace ProjectManagementSystem.API
@@ -106,6 +107,12 @@ namespace ProjectManagementSystem.API
             builder.Services.AddAuthorization();
 
             builder.Services.AddHttpContextAccessor();
+
+            builder.Services.AddSingleton<RabbitMQPublisherService>();
+
+            builder.Services.AddHostedService<RabbitMQConsumerService>();
+
+
 
             var app = builder.Build();
 

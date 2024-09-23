@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ProjectManagementSystem.Application\ProjectManagementSystem.Application.csproj" />
     <ProjectReference Include="..\ProjectManagementSystem.Entity\ProjectManagementSystem.Entity.csproj" />
+    <ProjectReference Include="..\ProjectManagementSystem.Repository\ProjectManagementSystem.Repository.csproj" />
   </ItemGroup>
 
 </Project>
