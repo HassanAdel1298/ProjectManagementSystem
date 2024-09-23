@@ -9,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using ProjectManagementSystem.Application;
 using ProjectManagementSystem.Application.CQRS.Projects.Queries;
 using ProjectManagementSystem.Application.Helpers;
+using ProjectManagementSystem.API.Middlewares;
 using ProjectManagementSystem.Application.Profiles;
 using ProjectManagementSystem.Entity.Data;
 using System.Diagnostics;
@@ -113,6 +114,8 @@ namespace ProjectManagementSystem.API
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseMiddleware<GlobalErrorHandlerMiddleware>();
+            app.UseMiddleware<TransactionMiddleware>();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

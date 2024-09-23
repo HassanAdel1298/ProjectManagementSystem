@@ -1,32 +1,31 @@
 ﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
-using ProjectManagementSystem.Application.DTO;
 using ProjectManagementSystem.Application.DTO.Projects;
+using ProjectManagementSystem.Application.DTO;
 using ProjectManagementSystem.Application.Helpers;
 using ProjectManagementSystem.Entity.Entities;
-using ProjectManagementSystem.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace ProjectManagementSystem.Application.CQRS.Projects.Commands
 {
 
-    public record UpdateProjectCommand(ProjectUpdateDTO projectDTO) : IRequest<ResultDTO<ProjectUpdateDTO>>;
+    public record UpdateProjectVisibilityCommand(ProjectUpdateVisibilityDTO projectDTO) : IRequest<ResultDTO<ProjectUpdateVisibilityDTO>>;
 
-    
 
-    public class UpdateProjectCommandHandler : BaseRequestHandler<Project ,UpdateProjectCommand, ResultDTO<ProjectUpdateDTO>>
+
+    public class UpdateProjectVisibilityCommandHandler : BaseRequestHandler<Project, UpdateProjectVisibilityCommand, ResultDTO<ProjectUpdateVisibilityDTO>>
     {
 
-        public UpdateProjectCommandHandler(RequestParameters<Project> requestParameters) : base(requestParameters)
+        public UpdateProjectVisibilityCommandHandler(RequestParameters<Project> requestParameters) : base(requestParameters)
         {
         }
-        public override async Task<ResultDTO<ProjectUpdateDTO>> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
+        public override async Task<ResultDTO<ProjectUpdateVisibilityDTO>> Handle(UpdateProjectVisibilityCommand request, CancellationToken cancellationToken)
         {
-            var result = await _repository.GetAllAsync()
+            var project = await _repository.GetAllAsync()
                                         .Where(p => p.ID == request.projectDTO.ID &&
                                         p.UserProjects.Contains
                                             (p.UserProjects.Where
@@ -39,23 +38,21 @@ namespace ProjectManagementSystem.Application.CQRS.Projects.Commands
                                         )
                                         .FirstOrDefaultAsync();
 
-            if (result is null)
+            if (project is null)
             {
-                return ResultDTO<ProjectUpdateDTO>.Faliure("Project ID Not Found or isn't managed this Project!");
+                return ResultDTO<ProjectUpdateVisibilityDTO>.Faliure("Project ID Not Found or isn't managed this Project!");
             }
 
-            var project = request.projectDTO.MapOne<Project>();
-
-            project.CreatedDate = result.CreatedDate;
-            project.IsPublic = result.IsPublic;
+            
+            project.IsPublic = request.projectDTO.IsPublic;
 
             await _repository.UpdateAsync(project);
 
             await _repository.SaveChangesAsync();
 
-            var projectDTO = project.MapOne<ProjectUpdateDTO>();
+            var projectDTO = project.MapOne<ProjectUpdateVisibilityDTO>();
 
-            return ResultDTO<ProjectUpdateDTO>.Sucess(projectDTO, "Project Updated successfully!");
+            return ResultDTO<ProjectUpdateVisibilityDTO>.Sucess(projectDTO, "Project Updated Visibility successfully!");
         }
     }
 }

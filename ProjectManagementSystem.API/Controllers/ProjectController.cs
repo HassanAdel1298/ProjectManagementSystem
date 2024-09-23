@@ -162,6 +162,33 @@ namespace ProjectManagementSystem.API.Controllers
             return ResultViewModel<ProjectUpdateDTO>.Sucess(resultDTO.Data, resultDTO.Message);
         }
 
+        [HttpPut]
+        [Authorize]
+        public async Task<ResultViewModel<ProjectUpdateVisibilityDTO>> UpdateVisibilityProject(ProjectUpdateVisibilityViewModel projectUpdateVisibilityViewModel)
+        {
+            int userID;
+            bool isUserID = int.TryParse(_userState.ID, out userID);
+
+            if (!isUserID)
+            {
+                return ResultViewModel<ProjectUpdateVisibilityDTO>.Faliure("User isn't Login");
+            }
+
+            var projectUpdateVisibilityDTO = projectUpdateVisibilityViewModel.MapOne<ProjectUpdateVisibilityDTO>();
+
+            projectUpdateVisibilityDTO.UserCreateID = userID;
+
+            var resultDTO = await _mediator.Send(new UpdateProjectVisibilityCommand(projectUpdateVisibilityDTO));
+
+            if (!resultDTO.IsSuccess)
+            {
+                return ResultViewModel<ProjectUpdateVisibilityDTO>.Faliure(resultDTO.Message);
+            }
+
+            return ResultViewModel<ProjectUpdateVisibilityDTO>.Sucess(resultDTO.Data, resultDTO.Message);
+        }
+
+
         [HttpPost]
         [Authorize]
         public async Task<ResultViewModel<bool>> AssignProjectToUser(AssignProjectViewModel assignProjectViewModel)
