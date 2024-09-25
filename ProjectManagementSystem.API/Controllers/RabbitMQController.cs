@@ -4,10 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using ProjectManagementSystem.Application.DTO;
 using ProjectManagementSystem.Application.ViewModel.Projects;
 using ProjectManagementSystem.Application.ViewModel.RabbitMQMessages;
-using ProjectManagementSystem.API.Services;
-using ProjectManagementSystem.Application.DTO.Projects;
-using ProjectManagementSystem.Application.Helpers;
 using ProjectManagementSystem.Application.ViewModel;
+using ProjectManagementSystem.Application.Services;
 
 namespace ProjectManagementSystem.API.Controllers
 {

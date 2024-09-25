@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using ProjectManagementSystem.Application.DTO;
+using ProjectManagementSystem.Application.Services;
 using ProjectManagementSystem.Entity.Entities;
 using ProjectManagementSystem.Repository.Interface;
 using System;
@@ -15,11 +16,15 @@ namespace ProjectManagementSystem.Application.Helpers
         protected readonly IMediator _mediator;
         protected readonly UserState _userState;
         protected readonly IRepository<TEntity> _repository;
+        protected readonly RabbitMQPublisherService _rabbitMQService;
+
         public BaseRequestHandler(RequestParameters<TEntity> requestParameters)
         {
             _mediator = requestParameters.Mediator;
             _userState = requestParameters.UserState;
             _repository = requestParameters.Repository;
+            _rabbitMQService = requestParameters.RabbitMQService;
+
 
         }
 

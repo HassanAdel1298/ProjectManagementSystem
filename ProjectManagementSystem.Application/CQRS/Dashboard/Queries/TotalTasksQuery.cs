@@ -25,9 +25,12 @@ namespace ProjectManagementSystem.Application.CQRS.Dashboard.Queries
 
         public override async Task<ResultDTO<TotalTasksDTO>> Handle(TotalTasksQuery request, CancellationToken cancellationToken)
         {
-            var total = await _repository.GetAllAsync().CountAsync();
+            var total = await _repository.GetAllAsync()
+                                                .Where(t => !t.Project.IsDeleted)
+                                                .CountAsync();
 
             var totalInProgress = await _repository.GetAllAsync()
+                                                .Where(t => !t.Project.IsDeleted)
                                                 .CountAsync(t => t.Status == Status.InProgress);
 
             TotalTasksDTO totalTasksDTO = new TotalTasksDTO()

@@ -33,7 +33,7 @@ namespace ProjectManagementSystem.Application.CQRS.UserProjects.Orchestrators
 
             if (!resultIsVerifiedAssignUser.IsSuccess)
             {
-                return resultIsVerifiedAssignUser;
+                return ResultDTO<bool>.Faliure(resultIsVerifiedAssignUser.Message);
             }
             var resultIsDeletedProject = await _mediator.Send(new IsDeletedProjectCommand(request.assignProjectDTO.ProjectID));
 

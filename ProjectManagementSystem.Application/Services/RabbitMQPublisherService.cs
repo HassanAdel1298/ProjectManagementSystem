@@ -3,7 +3,7 @@
 using RabbitMQ.Client;
 using System.Text;
 
-namespace ProjectManagementSystem.API.Services
+namespace ProjectManagementSystem.Application.Services
 {
     public class RabbitMQPublisherService
     {

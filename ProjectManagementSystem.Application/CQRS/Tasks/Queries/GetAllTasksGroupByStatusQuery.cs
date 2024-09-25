@@ -28,6 +28,7 @@ namespace ProjectManagementSystem.Application.CQRS.Tasks.Queries
             var tasksDTO = await _repository.GetAllAsync()
                                         .Where(
                                             t => t.ProjectID == request.projectID
+                                            && !t.Project.IsDeleted
                                         )
                                         .Select(t => new TaskReturnViewDTO()
                                         {

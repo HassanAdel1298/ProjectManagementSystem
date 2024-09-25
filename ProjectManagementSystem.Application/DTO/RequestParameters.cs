@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using ProjectManagementSystem.Application.Services;
 using ProjectManagementSystem.Entity.Entities;
 using ProjectManagementSystem.Repository.Interface;
 using System;
@@ -14,14 +15,17 @@ namespace ProjectManagementSystem.Application.DTO
         public IMediator Mediator { get; set; }
         public UserState UserState { get; set; }
         public IRepository<T> Repository { get; set; }
+        public RabbitMQPublisherService RabbitMQService { get; set; }
 
         public RequestParameters(IMediator mediator,
             UserState userState,
-            IRepository<T> repository)
+            IRepository<T> repository,
+            RabbitMQPublisherService rabbitMQService)
         {
             Mediator = mediator;
             UserState = userState;
             Repository = repository;
+            RabbitMQService = rabbitMQService;
         }
     }
 }

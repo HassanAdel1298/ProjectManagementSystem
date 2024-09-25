@@ -108,8 +108,6 @@ namespace ProjectManagementSystem.API
 
             builder.Services.AddHttpContextAccessor();
 
-            builder.Services.AddSingleton<RabbitMQPublisherService>();
-
             builder.Services.AddHostedService<RabbitMQConsumerService>();
 
 

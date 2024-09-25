@@ -12,28 +12,30 @@ using System.Threading.Tasks;
 namespace ProjectManagementSystem.Application.CQRS.Users.Commands
 {
    
-    public record IsVerifiedUserCommand(int UserID) : IRequest<ResultDTO<bool>>;
+    public record IsVerifiedUserCommand(int UserID) : IRequest<ResultDTO<string>>;
 
-    public class IsVerifiedUserCommandHandler : BaseRequestHandler<User, IsVerifiedUserCommand, ResultDTO<bool>>
+    public class IsVerifiedUserCommandHandler : BaseRequestHandler<User, IsVerifiedUserCommand, ResultDTO<string>>
     {
 
         public IsVerifiedUserCommandHandler(RequestParameters<User> requestParameters) : base(requestParameters)
         {
         }
 
-        public override async Task<ResultDTO<bool>> Handle(IsVerifiedUserCommand request, CancellationToken cancellationToken)
+        public override async Task<ResultDTO<string>> Handle(IsVerifiedUserCommand request, CancellationToken cancellationToken)
         {
-            var isVerifiedUser = await _repository.GetAllAsync()
-                                .AnyAsync(u => u.ID == request.UserID 
-                                        && u.IsEmailVerified);
+            var user = await _repository.GetAllAsync()
+                                .Where(u => u.ID == request.UserID 
+                                        && u.IsEmailVerified)
+                                .Select(u => u.Email)
+                                .FirstOrDefaultAsync();
 
 
-            if (!isVerifiedUser)
+            if (user is null)
             {
-                return ResultDTO<bool>.Faliure("User ID isn't Verified");
+                return ResultDTO<string>.Faliure("User ID isn't Verified");
             }
 
-            return ResultDTO<bool>.Sucess(true, "User ID is Verified");
+            return ResultDTO<string>.Sucess(user, "User ID is Verified");
         }
 
     }

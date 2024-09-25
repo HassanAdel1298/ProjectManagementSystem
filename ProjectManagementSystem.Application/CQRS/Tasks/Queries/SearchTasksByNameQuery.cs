@@ -35,6 +35,7 @@ namespace ProjectManagementSystem.Application.CQRS.Tasks.Queries
                                         .Where(t => t.Title == request.taskSearchDTO.Name 
                                                 && (t.UserCreateID == request.taskSearchDTO.userID
                                                 || t.UserAssignID == request.taskSearchDTO.userID)
+                                                && !t.Project.IsDeleted
                                         )
                                         .Select(t => new TaskReturnViewDTO()
                                         {

@@ -31,6 +31,7 @@ namespace ProjectManagementSystem.Entity.Entities
         public int? UserAssignID { get; set; }
         public User? UserAssign { get; set; }
 
+        public ICollection<TaskTimer> TaskTimers { get; set; }
     }
 
     public enum Status

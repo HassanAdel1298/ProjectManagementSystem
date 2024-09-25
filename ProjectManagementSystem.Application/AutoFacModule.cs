@@ -1,6 +1,7 @@
 ﻿
 
 using Autofac;
+using ProjectManagementSystem.Application.Services;
 using ProjectManagementSystem.Application.DTO;
 using ProjectManagementSystem.Entity.Data;
 using ProjectManagementSystem.Repository.Interface;
@@ -23,6 +24,8 @@ namespace ProjectManagementSystem.Application
             builder.RegisterType<ControllereParameters>().InstancePerLifetimeScope();
 
             builder.RegisterGeneric(typeof(RequestParameters<>)).InstancePerLifetimeScope();
+
+            builder.RegisterType<RabbitMQPublisherService>().InstancePerLifetimeScope();
 
         }
     }

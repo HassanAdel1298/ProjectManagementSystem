@@ -3,7 +3,6 @@
 
 
 using MediatR;
-using ProjectManagementSystem.Application.DTO;
 using ProjectManagementSystem.Application.ViewModel.RabbitMQMessages;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;

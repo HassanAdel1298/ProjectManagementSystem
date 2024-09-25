@@ -32,8 +32,9 @@ namespace ProjectManagementSystem.Application.CQRS.Tasks.Queries
                                             request.taskViewDTO.pageSize
                                         )
                                         .Where(
-                                            t => t.UserCreateID == request.taskViewDTO.userID
-                                            || t.UserAssignID == request.taskViewDTO.userID
+                                            t => (t.UserCreateID == request.taskViewDTO.userID
+                                            || t.UserAssignID == request.taskViewDTO.userID)
+                                            && !t.Project.IsDeleted
                                         )
                                         .Select(t => new TaskReturnViewDTO()
                                         {

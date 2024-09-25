@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ProjectManagementSystem.Application.DTO.Tasks;
 using ProjectManagementSystem.Application.CQRS.Tasks.Commands;
+using ProjectManagementSystem.Application.ViewModel.RabbitMQMessages;
 
 namespace ProjectManagementSystem.Application.CQRS.Tasks.Orchestrators
 {
@@ -64,6 +65,37 @@ namespace ProjectManagementSystem.Application.CQRS.Tasks.Orchestrators
 
 
             var resultCreateTaskDTO = await _mediator.Send(new CreateTaskCommand(request.taskDTO));
+
+            SendEmailMessage baseMessageForCreate = new SendEmailMessage
+            {
+                Sender = "ProjectManagementSystem",
+                Action = "SendEmail",
+                SentDate = DateTime.Now,
+                ToEmail = _userState.Email,
+                Subject = "Create New Task",
+                Body = $"Create your Task : {request.taskDTO.Title}"
+            };
+
+            baseMessageForCreate.Type = baseMessageForCreate.GetType().Name;
+            string messageForCreate = Newtonsoft.Json.JsonConvert.SerializeObject(baseMessageForCreate);
+            _rabbitMQService.PublishMessage(messageForCreate);
+
+
+
+
+            SendEmailMessage baseMessageForAssign = new SendEmailMessage
+            {
+                Sender = "ProjectManagementSystem",
+                Action = "SendEmail",
+                SentDate = DateTime.Now,
+                ToEmail = resultIsVerifiedAssignUser.Data,
+                Subject = "Assign New Task",
+                Body = $"Assign Task {request.taskDTO.Title} in your Project"
+            };
+
+            baseMessageForAssign.Type = baseMessageForAssign.GetType().Name;
+            string messageForAssign = Newtonsoft.Json.JsonConvert.SerializeObject(baseMessageForAssign);
+            _rabbitMQService.PublishMessage(messageForAssign);
 
             return resultCreateTaskDTO;
         }

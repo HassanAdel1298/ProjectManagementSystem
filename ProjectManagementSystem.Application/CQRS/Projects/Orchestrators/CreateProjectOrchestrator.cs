@@ -5,6 +5,7 @@ using ProjectManagementSystem.Application.CQRS.Users.Commands;
 using ProjectManagementSystem.Application.DTO;
 using ProjectManagementSystem.Application.DTO.Projects;
 using ProjectManagementSystem.Application.Helpers;
+using ProjectManagementSystem.Application.ViewModel.RabbitMQMessages;
 using ProjectManagementSystem.Entity.Entities;
 using System;
 using System.Collections.Generic;
@@ -43,6 +44,23 @@ namespace ProjectManagementSystem.Application.CQRS.Projects.Orchestrators
             {
                 return ResultDTO<ProjectCreateDTO>.Faliure(resultActiveUserDTO.Message);
             }
+
+            SendEmailMessage baseMessage = new SendEmailMessage
+            {
+                Sender = "ProjectManagementSystem",
+                Action = "SendEmail",
+                SentDate = DateTime.Now,
+                ToEmail = _userState.Email,
+                Subject = "Create New Project",
+                Body = $"Create your Project : {request.projectDTO.Title}"
+            };
+
+            baseMessage.Type = baseMessage.GetType().Name;
+
+            string msg = Newtonsoft.Json.JsonConvert.SerializeObject(baseMessage);
+
+
+            _rabbitMQService.PublishMessage(msg);
 
             return resultCreateProjectDTO;
         }
